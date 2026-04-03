@@ -2,7 +2,7 @@
 input=$(cat)
 
 # Debug mode - reads from config.json (sed -nE for cross-platform: macOS, Windows Git Bash)
-DEBUG=$(sed -nE 's/.*"debug":[[:space:]]*(true|false).*/\1/p' "${HOME}/.claude/plugins/statusline/config.json" 2>/dev/null | head -1)
+DEBUG=$(sed -nE 's/.*"debug":[[:space:]]*(true|false).*/\1/p' "${HOME}/.claude/plugins/lite-hud/config.json" 2>/dev/null | head -1)
 DEBUG=${DEBUG:-false}
 if [ "$DEBUG" = "true" ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') $input" >> ~/.claude/statusline-debug.log
@@ -25,7 +25,7 @@ USAGE_7D_COLOR="33"
 
 # Load configuration
 load_config() {
-    CONFIG="${HOME}/.claude/plugins/statusline/config.json"
+    CONFIG="${HOME}/.claude/plugins/lite-hud/config.json"
     [ ! -f "$CONFIG" ] && return
 
     # Flatten JSON to single line for regex parsing

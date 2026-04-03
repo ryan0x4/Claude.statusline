@@ -1,6 +1,6 @@
-# post-status
+# lite-hud
 
-Configurable statusline for Claude Code with git ahead/behind indicators and rate limit display.
+Lightweight zero-dependency statusline for Claude Code. Pure bash — no Node.js required.
 
 ## Features
 
@@ -9,18 +9,19 @@ Configurable statusline for Claude Code with git ahead/behind indicators and rat
 - **Git info**: Branch name with ahead/behind indicators (colored)
 - **Token usage**: Session tokens with percentage used
 - **Rate limits**: 5-hour and 7-day usage warnings (configurable thresholds)
+- **Zero dependencies**: Works everywhere Claude Code runs (macOS, Linux, Windows Git Bash)
 
 ## Installation
 
 ```bash
-# Add as standalone marketplace
-/plugin marketplace add Post-Math/post-status
+# Add marketplace
+/plugin marketplace add Im-YoungWoo/lite-hud
 
 # Install
-/plugin install post-status@post-status
+/plugin install lite-hud
 
 # Configure statusline
-/post-status:setup
+/lite-hud:setup
 ```
 
 Restart Claude Code after setup.
@@ -28,13 +29,13 @@ Restart Claude Code after setup.
 ## Update
 
 ```bash
-/plugin update post-status@post-status
-/post-status:setup
+/plugin update lite-hud
+/lite-hud:setup
 ```
 
 ## Configuration
 
-Edit `~/.claude/plugins/statusline/config.json`:
+Edit `~/.claude/plugins/lite-hud/config.json`:
 
 ```json
 {
@@ -69,7 +70,7 @@ ANSI color codes: 31=red, 32=green, 33=yellow, 34=blue, 35=magenta, 36=cyan
 ## Uninstall
 
 ```bash
-/plugin uninstall post-status@post-status
+/plugin uninstall lite-hud
 ```
 
 Then remove statusLine from `~/.claude/settings.json`.
