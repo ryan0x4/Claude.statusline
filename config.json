@@ -1,0 +1,19 @@
+{
+  "debug": false,
+  "git": {
+    "enabled": true,
+    "show_ahead_behind": true,
+    "ahead_color": "32",
+    "behind_color": "31"
+  },
+  "rate_limit_5h": {
+    "enabled": true,
+    "warning_threshold": 0,
+    "warning_color": "33"
+  },
+  "usage_7d": {
+    "enabled": true,
+    "warning_threshold": 80,
+    "warning_color": "33"
+  }
+}

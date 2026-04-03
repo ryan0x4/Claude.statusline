@@ -1,0 +1,23 @@
+{
+  "name": "post-status",
+  "owner": {
+    "name": "Post-Math",
+    "url": "https://github.com/Post-Math"
+  },
+  "metadata": {
+    "description": "Configurable statusline for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "post-status",
+      "source": "./",
+      "description": "Configurable statusline with git ahead/behind indicators and rate limit display",
+      "version": "1.1.3",
+      "author": {
+        "name": "PostMath AIDD Team"
+      },
+      "keywords": ["claude", "status", "statusline", "git", "rate-limit"]
+    }
+  ]
+}
