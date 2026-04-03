@@ -15,10 +15,10 @@ Lightweight zero-dependency statusline for Claude Code. Pure bash — no Node.js
 
 ```bash
 # Add marketplace
-/plugin marketplace add Im-YoungWoo/lite-hud
+/plugin marketplace add https://github.com/ryan0x4/Claude.statusline.git
 
 # Install
-/plugin install lite-hud
+/plugin install lite-hud@lite-hud
 
 # Configure statusline
 /lite-hud:setup
@@ -29,7 +29,7 @@ Restart Claude Code after setup.
 ## Update
 
 ```bash
-/plugin update lite-hud
+/plugin update lite-hud@lite-hud
 /lite-hud:setup
 ```
 

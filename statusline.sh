@@ -76,9 +76,9 @@ get_json_value() {
 # Load config
 load_config
 
-# Use pre-calculated percentage from Claude Code (includes cache tokens)
-PERCENT_USED=$(get_json_value "used_percentage")
-PERCENT_USED=${PERCENT_USED:-0}
+# Get context window size for percentage calculation
+CONTEXT_SIZE=$(get_json_value "context_window_size")
+CONTEXT_SIZE=${CONTEXT_SIZE:-200000}
 
 # Get current context tokens (includes cache)
 CACHE_READ=$(get_json_value "cache_read_input_tokens")
@@ -93,6 +93,9 @@ INPUT_TOKENS=${INPUT_TOKENS:-0}
 OUTPUT_TOKENS=${OUTPUT_TOKENS:-0}
 
 TOTAL_TOKENS=$((CACHE_READ + CACHE_CREATE + INPUT_TOKENS + OUTPUT_TOKENS))
+
+# Calculate percentage from displayed tokens and context window size
+PERCENT_USED=$(( TOTAL_TOKENS * 100 / CONTEXT_SIZE ))
 
 # Format token count with K notation
 if [ $TOTAL_TOKENS -ge 1000 ]; then
