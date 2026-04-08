@@ -60,31 +60,51 @@ load_config() {
     USAGE_7D_COLOR=${USAGE_7D_COLOR:-33}
 }
 
-# Helper function to extract JSON value using sed (portable, no jq needed)
+# Helper function to extract JSON value using sed (portable, no jq needed).
+# Pass an optional $2 to restrict the search to a substring (e.g. a scoped
+# parent object), avoiding collisions when the same key appears in sibling
+# objects elsewhere in the JSON.
 get_json_value() {
     local key="$1"
+    local scope="${2:-$input}"
     local result
-    # Try numeric value first, then string value
-    result=$(echo "$input" | sed -nE "s/.*\"${key}\"[[:space:]]*:[[:space:]]*([0-9]+).*/\1/p" | head -1)
-    if [ -n "$result" ]; then
-        echo "$result"
-        return
+    # Try numeric value first; fall through to string value if numeric is empty.
+    result=$(echo "$scope" | sed -nE "s/.*\"${key}\"[[:space:]]*:[[:space:]]*([0-9]+).*/\1/p" | head -1)
+    if [ -z "$result" ]; then
+        result=$(echo "$scope" | sed -nE "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"([^\"]*)\".*/\1/p" | head -1)
     fi
-    echo "$input" | sed -nE "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"([^\"]*)\".*/\1/p" | head -1
+    echo "$result"
 }
+
+# Extract the "context_window" object so downstream lookups can scope to it
+# and avoid the flat-search collision bug (where e.g. rate_limits.*.used_percentage
+# would match first due to greedy regex). The pattern below assumes context_window
+# contains at most one nested object (current_usage) — matches Claude Code's
+# v2.1.94 schema. If the shape changes and the match fails, CTX_WINDOW stays
+# empty; downstream code handles that explicitly — SCOPE falls back below for
+# token lookups, and the percentage selection falls through to manual calc.
+CTX_WINDOW=""
+if [[ "$input" =~ \"context_window\"[[:space:]]*:[[:space:]]*(\{[^{}]*(\{[^{}]*\})?[^{}]*\}) ]]; then
+    CTX_WINDOW="${BASH_REMATCH[1]}"
+fi
+# Best-effort scope for non-colliding token field lookups: prefer the extracted
+# context_window, but fall back to whole $input if extraction failed. Safe only
+# because the token field names (cache_read_input_tokens, etc.) are unique in
+# the current schema — do NOT use this for used_percentage (see below).
+SCOPE="${CTX_WINDOW:-$input}"
 
 # Load config
 load_config
 
-# Get context window size for percentage calculation
-CONTEXT_SIZE=$(get_json_value "context_window_size")
+# Get context window size for percentage calculation (scoped lookup)
+CONTEXT_SIZE=$(get_json_value "context_window_size" "$SCOPE")
 CONTEXT_SIZE=${CONTEXT_SIZE:-200000}
 
-# Get current context tokens (includes cache)
-CACHE_READ=$(get_json_value "cache_read_input_tokens")
-CACHE_CREATE=$(get_json_value "cache_creation_input_tokens")
-INPUT_TOKENS=$(get_json_value "input_tokens")
-OUTPUT_TOKENS=$(get_json_value "output_tokens")
+# Get current context tokens (includes cache) — all scoped to context_window
+CACHE_READ=$(get_json_value "cache_read_input_tokens" "$SCOPE")
+CACHE_CREATE=$(get_json_value "cache_creation_input_tokens" "$SCOPE")
+INPUT_TOKENS=$(get_json_value "input_tokens" "$SCOPE")
+OUTPUT_TOKENS=$(get_json_value "output_tokens" "$SCOPE")
 
 # Default to 0 if not found
 CACHE_READ=${CACHE_READ:-0}
@@ -94,8 +114,19 @@ OUTPUT_TOKENS=${OUTPUT_TOKENS:-0}
 
 TOTAL_TOKENS=$((CACHE_READ + CACHE_CREATE + INPUT_TOKENS + OUTPUT_TOKENS))
 
-# Calculate percentage from displayed tokens and context window size
-PERCENT_USED=$(( TOTAL_TOKENS * 100 / CONTEXT_SIZE ))
+# Prefer Claude Code's pre-rounded used_percentage (matches /context exactly).
+# Only query when CTX_WINDOW extraction succeeded — passing an empty scope to
+# get_json_value would let its ${2:-$input} default silently widen the search
+# to the whole JSON and re-trigger the rate_limits.*.used_percentage collision.
+# Fall back to manual calc during session startup (current_usage: null) or if
+# the schema changes and scope extraction stops finding context_window.
+PERCENT_USED=""
+if [ -n "$CTX_WINDOW" ]; then
+    PERCENT_USED=$(get_json_value "used_percentage" "$CTX_WINDOW")
+fi
+if [ -z "$PERCENT_USED" ]; then
+    PERCENT_USED=$(( TOTAL_TOKENS * 100 / CONTEXT_SIZE ))
+fi
 
 # Format token count with K notation
 if [ $TOTAL_TOKENS -ge 1000 ]; then
