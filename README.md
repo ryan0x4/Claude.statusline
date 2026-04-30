@@ -2,6 +2,8 @@
 
 Lightweight zero-dependency statusline for Claude Code. Pure bash — no Node.js required.
 
+<img width="692" height="110" alt="image" src="https://github.com/user-attachments/assets/3f69a616-a682-487b-8204-cae1b3c1c463" />
+
 ## Features
 
 - **Model display**: Shows current Claude model (stripped prefix)
