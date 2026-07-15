@@ -109,8 +109,11 @@ eval "$(printf '%s' "$input" | awk "BEGIN { RS = \"\" } $AWK_LIB"'
         emit_num("INPUT_TOKENS", num_val(scope, "input_tokens"))
         emit_num("OUTPUT_TOKENS", num_val(scope, "output_tokens"))
         if (ctx != "") emit_num("PERCENT_USED_PREROUNDED", num_val(ctx, "used_percentage"))
-        emit_num("RATE_5H", num_val($0, "rate_limit_5h_percentage"))
-        emit_num("USAGE_7D", num_val($0, "usage_7d_percentage"))
+        rl = get_object($0, "rate_limits")
+        if (rl != "") {
+            emit_num("RATE_5H", num_val(get_object(rl, "five_hour"), "used_percentage"))
+            emit_num("USAGE_7D", num_val(get_object(rl, "seven_day"), "used_percentage"))
+        }
         emit_str("MODEL_DISPLAY", str_val($0, "display_name"))
         emit_str("CURRENT_DIR", str_val($0, "current_dir"))
     }
