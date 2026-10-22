@@ -52,11 +52,11 @@ function get_object(s, key,   i, start, depth, ch) {
 }
 function emit(var, val)      { if (val != "") print var "=\"" val "\"" }
 function emit_num(var, val)  { if (val != "") print var "=" val }
+# Output is passed to eval: escape every char special inside double quotes.
 function emit_str(var, val,   v) {
     if (val == "") return
     v = val
-    gsub(/\\\\/, "\\\\\\\\", v)
-    gsub(/"/, "\\\"", v)
+    gsub(/[\\"$`]/, "\\\\&", v)
     print var "=\"" v "\""
 }
 '
