@@ -44,9 +44,9 @@ Or run the automatic CLI setup:
 > [!IMPORTANT]
 > On Windows, do **not** point directly to `statusline.sh`. Windows will treat `.sh` as an unrecognized script and repeatedly open it in your text editor (VS Code / Notepad). Instead, use the native **`statusline.cmd`** wrapper or prefix with `bash`.
 
-Inside Antigravity CLI chat on Windows:
+Inside Antigravity CLI chat on Windows (do not surround path with quotes):
 ```text
-/statusline C:/path/to/lite-hud/statusline.cmd
+/statusline C:\path\to\lite-hud\statusline.cmd
 ```
 *(or run `./statusline.sh --setup-agy` inside Git Bash, which auto-detects Windows and registers `statusline.cmd`)*.
 
@@ -89,7 +89,7 @@ If you prefer editing configuration files directly:
   {
     "statusLine": {
       "type": "command",
-      "command": "C:/path/to/lite-hud/statusline.cmd"
+      "command": "C:\\path\\to\\lite-hud\\statusline.cmd"
     }
   }
   ```

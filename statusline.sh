@@ -18,7 +18,11 @@ if [ "$1" = "--setup-agy" ] || [ "$1" = "--setup-antigravity" ]; then
 
     CMD_SCRIPT="$(cd "$(dirname "$0")" && pwd)/statusline.cmd"
     if [ "$IS_WINDOWS" = "true" ] && [ -f "$CMD_SCRIPT" ]; then
-        TARGET_CMD="$CMD_SCRIPT"
+        if command -v cygpath >/dev/null 2>&1; then
+            TARGET_CMD="$(cygpath -w "$CMD_SCRIPT")"
+        else
+            TARGET_CMD="$CMD_SCRIPT"
+        fi
     else
         TARGET_CMD="$SCRIPT_PATH"
     fi
