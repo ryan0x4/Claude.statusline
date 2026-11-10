@@ -1,0 +1,9 @@
+# Ensure shell scripts always keep LF endings across all platforms (especially Windows checkouts)
+*.sh text eol=lf
+*.bash text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+
+# Windows batch files must have CRLF
+*.cmd text eol=crlf
+*.bat text eol=crlf

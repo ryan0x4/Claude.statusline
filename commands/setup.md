@@ -19,16 +19,28 @@ mkdir -p ~/.claude/plugins/lite-hud
 ```
 
 ### Step 3: Configure statusLine in settings.json
-Read `~/.claude/settings.json`, add or update the `statusLine` key with the path found in Step 1:
-```json
-{
-  "statusLine": {
-    "type": "command",
-    "command": "<PLUGIN_DIR>/statusline.sh"
+Read `~/.claude/settings.json`, add or update the `statusLine` key:
+
+- **On macOS / Linux**:
+  ```json
+  {
+    "statusLine": {
+      "type": "command",
+      "command": "<PLUGIN_DIR>/statusline.sh"
+    }
   }
-}
-```
-Use `~` prefix (not absolute `/home/...`) for portability.
+  ```
+
+- **On Windows**:
+  Point to `statusline.cmd` (to prevent Windows from opening `.sh` in a text editor):
+  ```json
+  {
+    "statusLine": {
+      "type": "command",
+      "command": "<PLUGIN_DIR>/statusline.cmd"
+    }
+  }
+  ```
 
 ### Done
 Tell the user to restart Claude Code.
